@@ -2457,3 +2457,12 @@ kbd {
     width: 100%;
   }
 }
+.header-nav {
+  background: rgba(40,42,44,0.6);
+}
+.header-nav-inner {
+  font-size: 14px;
+}
+.header-nav-submenu .header-nav-menu-item {
+  font-size: 14px;
+}
