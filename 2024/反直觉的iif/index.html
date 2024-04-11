@@ -97,7 +97,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> Word count:</span>
-            <span class="post-count">425</span>
+            <span class="post-count">428</span>
         </span>
     </span>
 
@@ -153,7 +153,7 @@
 <p>iif的文档<a target="_blank" rel="noopener" href="https://rxjs.dev/api/index/function/iif">在此</a></p>
 <p>按理说iif操作符当中，只会有trueResult或是falseResult的其中一条语句被执行，为啥示例当中的两个stream的方法都会被调用呢？</p>
 <p>其实错就错在，不能按照传统的理解if else语句的方法来理解iif。</p>
-<p>看了iif的<a target="_blank" rel="noopener" href="https://github.com/ReactiveX/rxjs/blob/7.8.1/src/internal/observable/iif.ts#L4-L85">源码</a>之后才会明白，其实trueResult和falseResult都是用来创建Observable的，它本身的语句是同步执行的，所以他们当中的console.log语句都会被打印出来，而Observable本身是lazy的，只有在subscribe的时候才会返回trueResult或是falseResult当中的返回值。</p>
+<p>看了iif的<a target="_blank" rel="noopener" href="https://github.com/ReactiveX/rxjs/blob/7.8.1/src/internal/observable/iif.ts#L4-L85">源码</a>之后才会明白，其实trueResult和falseResult都是用来创建Observable的，它们本身当中的语句是同步执行的，所以它们当中的console.log语句都会被打印出来，而Observable本身是lazy的，只有在subscribe的时候才会返回trueResult或是falseResult当中的返回值。</p>
 <p>换句话说，就是，iif的作用不是选择性的执行trueResult或者falseResult里的语句，而是选择性的订阅到trueResult或者falseResult所创建的Observable。因此，在创建两个分支的Observable的过程当中，两个分支的代码都会被执行。</p>
 <p>“The role of iif is not to execute one path over the other, but to subscribe to one Observable or the other. That said, it will execute both code paths required to get each Observable.”</p>
  

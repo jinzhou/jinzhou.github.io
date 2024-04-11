@@ -203,7 +203,7 @@
 <p>iif的文档<a target="_blank" rel="noopener" href="https://rxjs.dev/api/index/function/iif">在此</a></p>
 <p>按理说iif操作符当中，只会有trueResult或是falseResult的其中一条语句被执行，为啥示例当中的两个stream的方法都会被调用呢？</p>
 <p>其实错就错在，不能按照传统的理解if else语句的方法来理解iif。</p>
-<p>看了iif的<a target="_blank" rel="noopener" href="https://github.com/ReactiveX/rxjs/blob/7.8.1/src/internal/observable/iif.ts#L4-L85">源码</a>之后才会明白，其实trueResult和falseResult都是用来创建Observable的，它本身的语句是同步执行的，所以他们当中的console.log语句都会被打印出来，而Observable本身是lazy的，只有在subscribe的时候才会返回trueResult或是falseResult当中的返回值。</p>
+<p>看了iif的<a target="_blank" rel="noopener" href="https://github.com/ReactiveX/rxjs/blob/7.8.1/src/internal/observable/iif.ts#L4-L85">源码</a>之后才会明白，其实trueResult和falseResult都是用来创建Observable的，它们本身当中的语句是同步执行的，所以它们当中的console.log语句都会被打印出来，而Observable本身是lazy的，只有在subscribe的时候才会返回trueResult或是falseResult当中的返回值。</p>
 <p>换句话说，就是，iif的作用不是选择性的执行trueResult或者falseResult里的语句，而是选择性的订阅到trueResult或者falseResult所创建的Observable。因此，在创建两个分支的Observable的过程当中，两个分支的代码都会被执行。</p>
 <p>“The role of iif is not to execute one path over the other, but to subscribe to one Observable or the other. That said, it will execute both code paths required to get each Observable.”</p>
  
@@ -309,9 +309,9 @@
   <p>终于！我这个懒癌患者总算是把博客搭起来啦~</p>
 <p>其实有这个想法已经有好几个年头了，可惜无奈工作太勤奋，闲暇时间又忙着打游戏，所以这个计划一直搁置着。</p>
 <p>前段时间正好遇到被公司强制放假一周，才紧赶慢赶地把这个博客给捣鼓出来了，给自己搭建一个可以随时在线查阅的技术笔记，岂不美哉？</p>
-<p>::: hljs-center<br><img src="/images/2024/04/11/b953f7dd-c7e7-4c3e-9cc7-bd96cf7d6ab3.png" alt="image.png"><br>:::</p>
+<p><img src="/images/2024/04/11/b953f7dd-c7e7-4c3e-9cc7-bd96cf7d6ab3.png" alt="王司徒竖起大拇指"></p>
 <p>有的时候思想的火花总是灵光一闪，觉得自己的顿悟了某个晦涩难懂的知识点，亦或是突然有了把几个知识点串连的灵感瞬间，当时的心情无比畅快，过了几天回想起来却如同在出门前找不到家里的钥匙一般，感觉好像放在哪里但就是寻不着，甭提有多难受。</p>
-<p>所以俗话说的好，好记性不如烂笔头，希望有了这个博客可以鞭策自己多做记录吧。</p>
+<p>所以俗话说的好，好记性不如烂笔头，希望有了这个博客可以鞭策自己多记录点东西吧。</p>
  
       <!-- reward -->
       
