@@ -1,20 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>About me</title>
-    <url>/2024/about-me/</url>
-    <content><![CDATA[<p>你好，很高兴认识你，我是一名生活在悉尼的程序员，爱好主机游戏和手机游戏。</p>
-<p>我喜欢小动物，但是不怎么热爱户外运动，现在是一名6年级小学生的爸爸和两个布偶猫的铲屎官。</p>
-<p>博客刚开也不知道该说些什么，以后再慢慢补上吧。</p>
+    <title>Hello World</title>
+    <url>/2024/hello-world/</url>
+    <content><![CDATA[<p>终于！我这个懒癌患者总算是把博客搭起来啦~</p>
+<p>其实有这个想法已经有好几个年头了，可惜无奈工作太勤奋，闲暇时间又忙着打游戏，所以这个计划一直搁置着。</p>
+<p>前段时间正好遇到被公司强制放假一周，才紧赶慢赶地把这个博客给捣鼓出来了，给自己搭建一个可以随时在线查阅的技术笔记，岂不美哉？</p>
+<p>::: hljs-center<br><img src="/images/2024/04/11/b953f7dd-c7e7-4c3e-9cc7-bd96cf7d6ab3.png" alt="image.png"><br>:::</p>
+<p>有的时候思想的火花总是灵光一闪，觉得自己的顿悟了某个晦涩难懂的知识点，亦或是突然有了把几个知识点串连的灵感瞬间，当时的心情无比畅快，过了几天回想起来却如同在出门前找不到家里的钥匙一般，感觉好像放在哪里但就是寻不着，甭提有多难受。</p>
+<p>所以俗话说的好，好记性不如烂笔头，希望有了这个博客可以鞭策自己多做记录吧。</p>
 ]]></content>
   </entry>
   <entry>
-    <title>Hello World</title>
-    <url>/2024/hello-world/</url>
-    <content><![CDATA[<p>我这个懒癌患者终于把博客搭起来啦。可以用来记录一些工作和学习当中遇到的问题啦。</p>
-<p>其实有这个想法已经有几个年头了，可惜无奈工作太忙，闲暇时间又忙着打游戏，所以这个计划一直搁置着。</p>
-<p>最近正好遇到假期，才把这个博客给搞出来，当作给自己一个随时可以查阅的技术笔记，真是挺不错的。</p>
-<p>毕竟好记性比不过烂笔头嘛。</p>
+    <title>About me</title>
+    <url>/2024/about-me/</url>
+    <content><![CDATA[<p>你好，很高兴认识你，我是一名生活在悉尼的程序员，爱好主机游戏和手机游戏。</p>
+<p>我喜欢小动物，喜欢宅在家，喜欢甜食和饮料，现在是一名6年级小学生的爸爸和两个布偶猫的铲屎官。</p>
+<p>作为一个码农，工作到现在已经有10来个年头了，在这悠悠的时光里，见证了许多技术的迭代与消亡，自身也完成了从后台到全栈再到纯前端的转变。</p>
+<p>刚把博客搭起来也不知道说些什么，以后再慢慢添加内容吧，溜了溜了~</p>
 ]]></content>
+  </entry>
+  <entry>
+    <title>反直觉的iif</title>
+    <url>/2024/%E5%8F%8D%E7%9B%B4%E8%A7%89%E7%9A%84iif/</url>
+    <content><![CDATA[<p>今天一个同事问我，为啥我写的iif语句里的两个分支里的代码都会被执。示例代码如下：</p>
+<figure class="shiki javascript"><div class='codeblock'><div class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></div><div class="code"><pre class="shiki dracula"><code><span class="line"></span>
+<span class="line"><span style="color: #FF79C6">import</span><span style="color: #F8F8F2"> { iif, of, pipe } </span><span style="color: #FF79C6">from</span><span style="color: #F8F8F2"> </span><span style="color: #E9F284">&#39;</span><span style="color: #F1FA8C">rxjs</span><span style="color: #E9F284">&#39;</span><span style="color: #F8F8F2">;</span></span>
+<span class="line"><span style="color: #FF79C6">import</span><span style="color: #F8F8F2"> { mergeMap } </span><span style="color: #FF79C6">from</span><span style="color: #F8F8F2"> </span><span style="color: #E9F284">&#39;</span><span style="color: #F1FA8C">rxjs/operators</span><span style="color: #E9F284">&#39;</span><span style="color: #F8F8F2">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color: #FF79C6">const</span><span style="color: #F8F8F2"> source$ </span><span style="color: #FF79C6">=</span><span style="color: #F8F8F2"> </span><span style="color: #50FA7B">of</span><span style="color: #F8F8F2">(</span><span style="color: #E9F284">&#39;</span><span style="color: #F1FA8C">Hello</span><span style="color: #E9F284">&#39;</span><span style="color: #F8F8F2">);</span></span>
+<span class="line"><span style="color: #FF79C6">const</span><span style="color: #F8F8F2"> </span><span style="color: #50FA7B">streamOne$</span><span style="color: #F8F8F2"> </span><span style="color: #FF79C6">=</span><span style="color: #F8F8F2"> () </span><span style="color: #FF79C6">=&gt;</span><span style="color: #F8F8F2"> {</span></span>
+<span class="line"><span style="color: #F8F8F2">  console.</span><span style="color: #50FA7B">log</span><span style="color: #F8F8F2">(</span><span style="color: #E9F284">&#39;</span><span style="color: #F1FA8C">inside stream one</span><span style="color: #E9F284">&#39;</span><span style="color: #F8F8F2">);</span></span>
+<span class="line"><span style="color: #F8F8F2">  </span><span style="color: #FF79C6">return</span><span style="color: #F8F8F2"> </span><span style="color: #50FA7B">of</span><span style="color: #F8F8F2">(</span><span style="color: #E9F284">&#39;</span><span style="color: #F1FA8C">One</span><span style="color: #E9F284">&#39;</span><span style="color: #F8F8F2">);</span></span>
+<span class="line"><span style="color: #F8F8F2">};</span></span>
+<span class="line"><span style="color: #FF79C6">const</span><span style="color: #F8F8F2"> </span><span style="color: #50FA7B">streamTwo$</span><span style="color: #F8F8F2"> </span><span style="color: #FF79C6">=</span><span style="color: #F8F8F2"> () </span><span style="color: #FF79C6">=&gt;</span><span style="color: #F8F8F2"> {</span></span>
+<span class="line"><span style="color: #F8F8F2">  console.</span><span style="color: #50FA7B">log</span><span style="color: #F8F8F2">(</span><span style="color: #E9F284">&#39;</span><span style="color: #F1FA8C">inside stream two</span><span style="color: #E9F284">&#39;</span><span style="color: #F8F8F2">);</span></span>
+<span class="line"><span style="color: #F8F8F2">  </span><span style="color: #FF79C6">return</span><span style="color: #F8F8F2"> </span><span style="color: #50FA7B">of</span><span style="color: #F8F8F2">(</span><span style="color: #E9F284">&#39;</span><span style="color: #F1FA8C">Two</span><span style="color: #E9F284">&#39;</span><span style="color: #F8F8F2">);</span></span>
+<span class="line"><span style="color: #F8F8F2">};</span></span>
+<span class="line"></span>
+<span class="line"><span style="color: #F8F8F2">source$.</span><span style="color: #50FA7B">pipe</span><span style="color: #F8F8F2">(</span></span>
+<span class="line"><span style="color: #F8F8F2">  </span><span style="color: #50FA7B">mergeMap</span><span style="color: #F8F8F2">(</span><span style="color: #FFB86C; font-style: italic">v</span><span style="color: #F8F8F2"> </span><span style="color: #FF79C6">=&gt;</span></span>
+<span class="line"><span style="color: #F8F8F2">    </span><span style="color: #50FA7B">iif</span><span style="color: #F8F8F2">(</span></span>
+<span class="line"><span style="color: #F8F8F2">      () </span><span style="color: #FF79C6">=&gt;</span><span style="color: #F8F8F2"> v </span><span style="color: #FF79C6">===</span><span style="color: #F8F8F2"> </span><span style="color: #E9F284">&#39;</span><span style="color: #F1FA8C">Hello</span><span style="color: #E9F284">&#39;</span><span style="color: #F8F8F2">,</span></span>
+<span class="line"><span style="color: #F8F8F2">      </span><span style="color: #50FA7B">streamOne$</span><span style="color: #F8F8F2">(),</span></span>
+<span class="line"><span style="color: #F8F8F2">      </span><span style="color: #50FA7B">streamTwo$</span><span style="color: #F8F8F2">()</span></span>
+<span class="line"><span style="color: #F8F8F2">    )</span></span>
+<span class="line"><span style="color: #F8F8F2">  )</span></span>
+<span class="line"><span style="color: #F8F8F2">).</span><span style="color: #50FA7B">subscribe</span><span style="color: #F8F8F2">(console.log);</span></span></code></pre></div></div></figure>
+
+<p>以上代码的输出如下：</p>
+<figure class="shiki console"><div class='codeblock'><div class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></div><div class="code"><pre class="shiki dracula"><code><span class="line"><span style="color: #F8F8F2">inside stream one</span></span>
+<span class="line"><span style="color: #F8F8F2">inside stream two</span></span>
+<span class="line"><span style="color: #F8F8F2">One</span></span></code></pre></div></div></figure>
+
+<p>这是不是有些让人匪夷所思呢？碰巧这个问题我自己之前也遇到过，所以我依稀有些印象，那么接下来我就来梳理一下。</p>
+<p>iif的文档<a href="https://rxjs.dev/api/index/function/iif">在此</a></p>
+<p>按理说iif操作符当中，只会有trueResult或是falseResult的其中一条语句被执行，为啥示例当中的两个stream的方法都会被调用呢？</p>
+<p>其实错就错在，不能按照传统的理解if else语句的方法来理解iif。</p>
+<p>看了iif的<a href="https://github.com/ReactiveX/rxjs/blob/7.8.1/src/internal/observable/iif.ts#L4-L85">源码</a>之后才会明白，其实trueResult和falseResult都是用来创建Observable的，它本身的语句是同步执行的，所以他们当中的console.log语句都会被打印出来，而Observable本身是lazy的，只有在subscribe的时候才会返回trueResult或是falseResult当中的返回值。</p>
+<p>换句话说，就是，iif的作用不是选择性的执行trueResult或者falseResult里的语句，而是选择性的订阅到trueResult或者falseResult所创建的Observable。因此，在创建两个分支的Observable的过程当中，两个分支的代码都会被执行。</p>
+<p>“The role of iif is not to execute one path over the other, but to subscribe to one Observable or the other. That said, it will execute both code paths required to get each Observable.”</p>
+]]></content>
+      <tags>
+        <tag>rxjs</tag>
+      </tags>
   </entry>
 </search>
