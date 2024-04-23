@@ -61,6 +61,122 @@
 <p>换句话说，就是，iif的作用不是选择性的执行trueResult或者falseResult里的语句，而是选择性的订阅到trueResult或者falseResult所创建的Observable。因此，在创建两个分支的Observable的过程当中，两个分支的代码都会被执行。</p>
 <p>“The role of iif is not to execute one path over the other, but to subscribe to one Observable or the other. That said, it will execute both code paths for setting up each Observable.”</p>
 ]]></content>
+      <categories>
+        <category>技术笔记</category>
+      </categories>
+      <tags>
+        <tag>rxjs</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>rate limiting operators</title>
+    <url>/2024/rate-limiting-operators/</url>
+    <content><![CDATA[<p>rate limiting（速率限制），想必工作有些年头的老鸟，应该都不会陌生，尤其是debounce和throttle，更是前端程序员常常会遇到的情况。</p>
+<p>rxjs不仅提供了debounce和throttle，还提供了audit和sample这两个比较少见的operator，以及它们4个相对应的debounceTime，throttleTime，auditTime以及sampleTime，那么接下来我就来理一理它们的概念和使用场景。</p>
+<p>首先讲讲所有的rate limiting的操作符的通用使用场景，就是一定有2个Observable，一个source$负责生产数据，一个duration$负责产生时间间隔，这个时间间隔我们又拿它来控制数据的过滤筛选。</p>
+<p>先来讲debounceTime，throttleTime，auditTime和sampleTime，因为它们相对好理解，只要搞懂了这4个，搞懂另外4个就不难了。</p>
+<p>throttleTime(duration): 在指定的时间间隔内只发出第一个值，然后忽略在该时间间隔内发出的其他值，直到下一个时间间隔开始。</p>
+<figure class="shiki javascript"><div class='codeblock'><div class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></div><div class="code"><pre class="shiki dracula"><code><span class="line"><span style="color: #FF79C6">import</span><span style="color: #F8F8F2"> { interval } </span><span style="color: #FF79C6">from</span><span style="color: #F8F8F2"> </span><span style="color: #E9F284">&#39;</span><span style="color: #F1FA8C">rxjs</span><span style="color: #E9F284">&#39;</span><span style="color: #F8F8F2">;</span></span>
+<span class="line"><span style="color: #FF79C6">import</span><span style="color: #F8F8F2"> { throttleTime } </span><span style="color: #FF79C6">from</span><span style="color: #F8F8F2"> </span><span style="color: #E9F284">&#39;</span><span style="color: #F1FA8C">rxjs/operators</span><span style="color: #E9F284">&#39;</span><span style="color: #F8F8F2">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color: #FF79C6">const</span><span style="color: #F8F8F2"> source$ </span><span style="color: #FF79C6">=</span><span style="color: #F8F8F2"> </span><span style="color: #50FA7B">interval</span><span style="color: #F8F8F2">(</span><span style="color: #BD93F9">1000</span><span style="color: #F8F8F2">);</span></span>
+<span class="line"><span style="color: #FF79C6">const</span><span style="color: #F8F8F2"> output$ </span><span style="color: #FF79C6">=</span><span style="color: #F8F8F2"> source$.</span><span style="color: #50FA7B">pipe</span><span style="color: #F8F8F2">(</span><span style="color: #50FA7B">throttleTime</span><span style="color: #F8F8F2">(</span><span style="color: #BD93F9">1000</span><span style="color: #F8F8F2">));</span></span>
+<span class="line"><span style="color: #F8F8F2">output$.</span><span style="color: #50FA7B">subscribe</span><span style="color: #F8F8F2">(console.log);</span></span></code></pre></div></div></figure>
+<p>结果如下：</p>
+<figure class="shiki console"><div class='codeblock'><div class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></div><div class="code"><pre class="shiki dracula"><code><span class="line"><span style="color: #F8F8F2">0</span></span>
+<span class="line"><span style="color: #F8F8F2">2</span></span>
+<span class="line"><span style="color: #F8F8F2">4</span></span>
+<span class="line"><span style="color: #F8F8F2">6</span></span>
+<span class="line"><span style="color: #F8F8F2">8</span></span>
+<span class="line"><span style="color: #F8F8F2">...</span></span></code></pre></div></div></figure>
+
+<p>debounceTime(duration): 在指定的时间间隔后才发出最新值，如果在此期间内有新值，则重新计时。</p>
+<figure class="shiki javascript"><div class='codeblock'><div class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></div><div class="code"><pre class="shiki dracula"><code><span class="line"><span style="color: #FF79C6">import</span><span style="color: #F8F8F2"> { interval } </span><span style="color: #FF79C6">from</span><span style="color: #F8F8F2"> </span><span style="color: #E9F284">&#39;</span><span style="color: #F1FA8C">rxjs</span><span style="color: #E9F284">&#39;</span><span style="color: #F8F8F2">;</span></span>
+<span class="line"><span style="color: #FF79C6">import</span><span style="color: #F8F8F2"> { debounceTime } </span><span style="color: #FF79C6">from</span><span style="color: #F8F8F2"> </span><span style="color: #E9F284">&#39;</span><span style="color: #F1FA8C">rxjs/operators</span><span style="color: #E9F284">&#39;</span><span style="color: #F8F8F2">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color: #FF79C6">const</span><span style="color: #F8F8F2"> source$ </span><span style="color: #FF79C6">=</span><span style="color: #F8F8F2"> </span><span style="color: #50FA7B">interval</span><span style="color: #F8F8F2">(</span><span style="color: #BD93F9">1000</span><span style="color: #F8F8F2">);</span></span>
+<span class="line"><span style="color: #FF79C6">const</span><span style="color: #F8F8F2"> output$ </span><span style="color: #FF79C6">=</span><span style="color: #F8F8F2"> source$.</span><span style="color: #50FA7B">pipe</span><span style="color: #F8F8F2">(</span><span style="color: #50FA7B">debounceTime</span><span style="color: #F8F8F2">(</span><span style="color: #BD93F9">1000</span><span style="color: #F8F8F2">));</span></span>
+<span class="line"><span style="color: #F8F8F2">output$.</span><span style="color: #50FA7B">subscribe</span><span style="color: #F8F8F2">(console.log);</span></span></code></pre></div></div></figure>
+<p>我没法给出结果，<strong>因为每次我测试的结果都不一样</strong>，为什么会这样呢？？？我至今还没有答案。</p>
+<p>根据定义debounceTime就是如果在duration之内，source$不再产生新的数据，才把最后的的值传递给下游，而示例代码每次duration刚到的时候，上游又产生了新的数据，于是又开始重新等待，如此往复。</p>
+<p>我猜想，这个operator的使用场景并不适用于上游数据是有节奏性的产生的，而是突然爆发性的产生一堆，而后生产数据的节奏又慢下来，而我们想要在数据稳定了之后，再去获取最后的数据。搜索栏的使用场景就非常适用于debounceTime。</p>
+<p>auditTime(duration)：在指定的时间间隔内只发出最新值，超过该时间间隔没有新值则发出最后一个值。</p>
+<figure class="shiki javascript"><div class='codeblock'><div class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></div><div class="code"><pre class="shiki dracula"><code><span class="line"><span style="color: #FF79C6">import</span><span style="color: #F8F8F2"> { interval } </span><span style="color: #FF79C6">from</span><span style="color: #F8F8F2"> </span><span style="color: #E9F284">&#39;</span><span style="color: #F1FA8C">rxjs</span><span style="color: #E9F284">&#39;</span><span style="color: #F8F8F2">;</span></span>
+<span class="line"><span style="color: #FF79C6">import</span><span style="color: #F8F8F2"> { auditTime } </span><span style="color: #FF79C6">from</span><span style="color: #F8F8F2"> </span><span style="color: #E9F284">&#39;</span><span style="color: #F1FA8C">rxjs/operators</span><span style="color: #E9F284">&#39;</span><span style="color: #F8F8F2">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color: #FF79C6">const</span><span style="color: #F8F8F2"> source$ </span><span style="color: #FF79C6">=</span><span style="color: #F8F8F2"> </span><span style="color: #50FA7B">interval</span><span style="color: #F8F8F2">(</span><span style="color: #BD93F9">1000</span><span style="color: #F8F8F2">);</span></span>
+<span class="line"><span style="color: #FF79C6">const</span><span style="color: #F8F8F2"> output$ </span><span style="color: #FF79C6">=</span><span style="color: #F8F8F2"> source$.</span><span style="color: #50FA7B">pipe</span><span style="color: #F8F8F2">(</span><span style="color: #50FA7B">auditTime</span><span style="color: #F8F8F2">(</span><span style="color: #BD93F9">1000</span><span style="color: #F8F8F2">));</span></span>
+<span class="line"><span style="color: #F8F8F2">output$.</span><span style="color: #50FA7B">subscribe</span><span style="color: #F8F8F2">(console.log);</span></span></code></pre></div></div></figure>
+<p>结果如下：</p>
+<figure class="shiki console"><div class='codeblock'><div class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></div><div class="code"><pre class="shiki dracula"><code><span class="line"><span style="color: #F8F8F2">1</span></span>
+<span class="line"><span style="color: #F8F8F2">3</span></span>
+<span class="line"><span style="color: #F8F8F2">5</span></span>
+<span class="line"><span style="color: #F8F8F2">7</span></span>
+<span class="line"><span style="color: #F8F8F2">9</span></span>
+<span class="line"><span style="color: #F8F8F2">...</span></span></code></pre></div></div></figure>
+<p>sampleTime(duration)：在指定的时间间隔内对上游数据进行采样，并在每个时间间隔结束时发出最新的取样值。</p>
+<figure class="shiki javascript"><div class='codeblock'><div class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></div><div class="code"><pre class="shiki dracula"><code><span class="line"><span style="color: #FF79C6">import</span><span style="color: #F8F8F2"> { interval } </span><span style="color: #FF79C6">from</span><span style="color: #F8F8F2"> </span><span style="color: #E9F284">&#39;</span><span style="color: #F1FA8C">rxjs</span><span style="color: #E9F284">&#39;</span><span style="color: #F8F8F2">;</span></span>
+<span class="line"><span style="color: #FF79C6">import</span><span style="color: #F8F8F2"> { sampleTime } </span><span style="color: #FF79C6">from</span><span style="color: #F8F8F2"> </span><span style="color: #E9F284">&#39;</span><span style="color: #F1FA8C">rxjs/operators</span><span style="color: #E9F284">&#39;</span><span style="color: #F8F8F2">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color: #FF79C6">const</span><span style="color: #F8F8F2"> source$ </span><span style="color: #FF79C6">=</span><span style="color: #F8F8F2"> </span><span style="color: #50FA7B">interval</span><span style="color: #F8F8F2">(</span><span style="color: #BD93F9">1000</span><span style="color: #F8F8F2">);</span></span>
+<span class="line"><span style="color: #FF79C6">const</span><span style="color: #F8F8F2"> output$ </span><span style="color: #FF79C6">=</span><span style="color: #F8F8F2"> source$.</span><span style="color: #50FA7B">pipe</span><span style="color: #F8F8F2">(</span><span style="color: #50FA7B">sampleTime</span><span style="color: #F8F8F2">(</span><span style="color: #BD93F9">1000</span><span style="color: #F8F8F2">));</span></span>
+<span class="line"><span style="color: #F8F8F2">output$.</span><span style="color: #50FA7B">subscribe</span><span style="color: #F8F8F2">(console.log);</span></span></code></pre></div></div></figure>
+<p>结果如下：</p>
+<figure class="shiki console"><div class='codeblock'><div class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></div><div class="code"><pre class="shiki dracula"><code><span class="line"><span style="color: #F8F8F2">0</span></span>
+<span class="line"><span style="color: #F8F8F2">1</span></span>
+<span class="line"><span style="color: #F8F8F2">2</span></span>
+<span class="line"><span style="color: #F8F8F2">3</span></span>
+<span class="line"><span style="color: #F8F8F2">4</span></span>
+<span class="line"><span style="color: #F8F8F2">...</span></span></code></pre></div></div></figure>
+<p>可以发现sampleTime的duration如果和上游生产数据的速率一致，则没有太大的使用意义，只有当duration大于上游的生产速率时才有用：</p>
+<figure class="shiki javascript"><div class='codeblock'><div class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></div><div class="code"><pre class="shiki dracula"><code><span class="line"><span style="color: #FF79C6">import</span><span style="color: #F8F8F2"> { interval } </span><span style="color: #FF79C6">from</span><span style="color: #F8F8F2"> </span><span style="color: #E9F284">&#39;</span><span style="color: #F1FA8C">rxjs</span><span style="color: #E9F284">&#39;</span><span style="color: #F8F8F2">;</span></span>
+<span class="line"><span style="color: #FF79C6">import</span><span style="color: #F8F8F2"> { sampleTime } </span><span style="color: #FF79C6">from</span><span style="color: #F8F8F2"> </span><span style="color: #E9F284">&#39;</span><span style="color: #F1FA8C">rxjs/operators</span><span style="color: #E9F284">&#39;</span><span style="color: #F8F8F2">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color: #FF79C6">const</span><span style="color: #F8F8F2"> source$ </span><span style="color: #FF79C6">=</span><span style="color: #F8F8F2"> </span><span style="color: #50FA7B">interval</span><span style="color: #F8F8F2">(</span><span style="color: #BD93F9">1000</span><span style="color: #F8F8F2">);</span></span>
+<span class="line"><span style="color: #FF79C6">const</span><span style="color: #F8F8F2"> output$ </span><span style="color: #FF79C6">=</span><span style="color: #F8F8F2"> source$.</span><span style="color: #50FA7B">pipe</span><span style="color: #F8F8F2">(</span><span style="color: #50FA7B">sampleTime</span><span style="color: #F8F8F2">(</span><span style="color: #BD93F9">3000</span><span style="color: #F8F8F2">));</span></span>
+<span class="line"><span style="color: #F8F8F2">output$.</span><span style="color: #50FA7B">subscribe</span><span style="color: #F8F8F2">(console.log);</span></span></code></pre></div></div></figure>
+<p>结果如下：</p>
+<figure class="shiki console"><div class='codeblock'><div class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></div><div class="code"><pre class="shiki dracula"><code><span class="line"><span style="color: #F8F8F2">2</span></span>
+<span class="line"><span style="color: #F8F8F2">5</span></span>
+<span class="line"><span style="color: #F8F8F2">8</span></span>
+<span class="line"><span style="color: #F8F8F2">11</span></span>
+<span class="line"><span style="color: #F8F8F2">14</span></span>
+<span class="line"><span style="color: #F8F8F2">...</span></span></code></pre></div></div></figure>
+
+<p>综上，以下是每个操作符的说明以及其适用场景：</p>
+<table>
+<thead>
+<tr>
+<th>操作符</th>
+<th>说明</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>throttleTime</td>
+<td>在指定的时间间隔内只发出第一个值，然后忽略在该时间间隔内发出的其他值，直到下一个时间间隔开始。</td>
+<td>需要在特定时间间隔内处理事件，比如防止按钮重复点击，或者限制用户连续输入的频率。</td>
+</tr>
+<tr>
+<td>debounceTime</td>
+<td>在指定的时间间隔后才发出最新值，如果在此期间内有新值，则重新计时。</td>
+<td>用于处理频繁的事件，比如输入框输入时的搜索请求，只在用户停止输入一段时间后才发出请求。</td>
+</tr>
+<tr>
+<td>auditTime</td>
+<td>在指定的时间间隔内只发出最新值，超过该时间间隔没有新值则发出最后一个值。</td>
+<td>当你只关心事件在一段时间内的情况，而不关心中间值，比如在点击事件中只关心每隔一段时间内的最新点击。</td>
+</tr>
+<tr>
+<td>sampleTime</td>
+<td>在指定的时间间隔内从上游中取样，并在每个时间间隔结束时发出最新的取样值。</td>
+<td>当你需要以固定的时间间隔获取上游的最新值时，比如每隔一段时间对数据进行统计或者更新状态。</td>
+</tr>
+</tbody></table>
+]]></content>
+      <categories>
+        <category>技术笔记</category>
+      </categories>
       <tags>
         <tag>rxjs</tag>
       </tags>
